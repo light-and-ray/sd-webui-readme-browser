@@ -91,7 +91,11 @@ def getTabUI():
         extPath = gr.Textbox("", visible=False)
 
         with gr.Row():
-            selectedExtension = gr.Dropdown(value="None", choices=["None"] + list(readmeFilesByExtName.keys()))
+            selectedExtension = gr.Dropdown(
+                label="Extension",
+                value="None",
+                choices=["None"] + list(readmeFilesByExtName.keys())
+            )
             selectButton = gr.Button('Select')
             selectButton.click(
                 fn=selectExtension,
