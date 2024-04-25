@@ -6,6 +6,7 @@ from readme_browser.tools import getURLsFromFile, isLocalURL, isAnchor, isMarkdo
 
 JS_PREFIX = 'readme_browser_javascript_'
 
+
 def renderMarkdownFile(filePath: str, extDir: str):
     with open(filePath) as f:
         file = f.read()
@@ -13,7 +14,7 @@ def renderMarkdownFile(filePath: str, extDir: str):
     for url in getURLsFromFile(file):
         originalURL = url
         replacementUrl = None
-        if JS_PREFIX in url:
+        if JS_PREFIX in originalURL:
             file = file.replace(originalURL, "***")
             continue
 
@@ -36,6 +37,7 @@ def renderMarkdownFile(filePath: str, extDir: str):
 
         if replacementUrl is not None:
             file = file.replace(originalURL, replacementUrl)
+
     return file
 
 
@@ -49,7 +51,6 @@ def selectExtension(extName: str):
 
 @dataclass
 class ReadmeFileData:
-    extName: str
     filePath: str
     extPath: str
 
@@ -63,7 +64,7 @@ def initReadmeFiles():
     files = util.listfiles(webuiPath)
     for file in files:
         if os.path.basename(file).lower() == 'readme.md':
-            readmeFilesByExtName[webuiName] = ReadmeFileData(webuiName, file, paths_internal.data_path)
+            readmeFilesByExtName[webuiName] = ReadmeFileData(file, webuiPath)
             break
 
     for ext in extensions.extensions:
@@ -71,8 +72,7 @@ def initReadmeFiles():
         files = util.listfiles(ext.path)
         for file in files:
             if os.path.basename(file).lower() == 'readme.md':
-                data = ReadmeFileData(ext.name, file, ext.path)
-                readmeFilesByExtName[ext.name] = data
+                readmeFilesByExtName[ext.name] = ReadmeFileData(file, ext.path)
                 break
 
 
@@ -104,7 +104,7 @@ def getTabUI():
             ).then(
             fn=None,
             _js='readme_browser_convertUrls',
-        )
+            )
         with gr.Row():
             markdownFile.render()
 
@@ -114,6 +114,9 @@ def getTabUI():
             _js="readme_browser_openSubFile_",
             inputs=[dummy_component, extPath],
             outputs=[markdownFile]
+        ).then(
+            fn=None,
+            _js='readme_browser_convertUrls',
         )
 
     return tab

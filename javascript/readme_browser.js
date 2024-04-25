@@ -16,10 +16,19 @@ function readme_browser_openSubFile(filePath) {
 function readme_browser_convertUrls() {
     file = gradioApp().getElementById('readme_browser_file');
     hElements = [...file.querySelectorAll("h1, h2, h3, h4, h5, h6")];
+    let anchorNumbers = {};
     hElements.forEach((h) => {
         if (!h.innerHTML) return;
         let anchor = document.createElement('a');
-        anchor.setAttribute('id', h.innerHTML.toLowerCase().replace(' ', '_'));
+        let anchorID = h.innerHTML.toLowerCase().replace(' ', '-');
+        if (anchorID in anchorNumbers) {
+            let key = anchorID;
+            anchorID += '-' + anchorNumbers[key];
+            anchorNumbers[key] += 1;
+        } else {
+            anchorNumbers[anchorID] = 1;
+        }
+        anchor.setAttribute('id', anchorID);
         h.parentNode.insertBefore(anchor, h);
     });
 

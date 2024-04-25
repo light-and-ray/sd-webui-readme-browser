@@ -16,6 +16,6 @@ def addTabInExtensionsTab(component, **kwargs):
     with tabs:
         with gr.Tab("Readme files", elem_id="readme_files_tab"):
             getTabUI()
-            
+
 
 script_callbacks.on_after_component(addTabInExtensionsTab)
