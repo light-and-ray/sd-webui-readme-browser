@@ -30,7 +30,7 @@ def renderMarkdownFile(filePath: str, extDir: str):
             else:
                 urlFullPath = os.path.join(os.path.dirname(filePath), url)
 
-            if isMarkdown(url):
+            if isMarkdown(url) and os.path.exists(urlFullPath):
                 replacementUrl = f"{JS_PREFIX}readme_browser_openSubFile('{urlFullPath}')"
             else:
                 replacementUrl = f'file={urlFullPath}'
