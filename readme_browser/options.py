@@ -71,7 +71,7 @@ options = {
         "Cache location",
         gr.Textbox,
         {
-            "placeholder": "Leave empty to use default 'sd_webui_replacer_browser/cache' location",
+            "placeholder": "Leave empty to use default 'sd-webui-readme-browser/cache' location",
         },
         section=section,
     ).needs_reload_ui(),
