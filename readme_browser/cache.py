@@ -5,6 +5,7 @@ from readme_browser.options import getCacheLocation
 
 
 def needCacheURL(url: str):
+    url = url.lower()
     if 'github.com' in url and '/assets/' in url:
         return True
     if 'githubusercontent.com' in url:
