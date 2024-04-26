@@ -1,7 +1,12 @@
-
-.readme-browser-file{
+.readme-browser-file {
     max-width: 1012px;
     margin-right: auto !important;
     margin-left: auto !important;
     font-size-adjust: 0.55 !important;
+}
+
+.readme-browser-file table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
 }

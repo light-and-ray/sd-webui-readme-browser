@@ -54,7 +54,7 @@ def renderMarkdownFile(filePath: str, extDir: str):
 
 
 def selectExtension(extName: str):
-    if extName == "None":
+    if extName not in readme_files.readmeFilesByExtName.keys():
         return "", ""
     data = readme_files.readmeFilesByExtName[extName]
     file = renderMarkdownFile(data.filePath, data.extPath)
@@ -80,8 +80,8 @@ def getTabUI():
         with gr.Row():
             selectedExtension = gr.Dropdown(
                 label="Extension",
-                value="None",
-                choices=["None"] + list(readme_files.readmeFilesByExtName.keys())
+                value="",
+                choices=[""] + list(readme_files.readmeFilesByExtName.keys())
             )
             selectButton = gr.Button('Select')
             selectButton.click(
