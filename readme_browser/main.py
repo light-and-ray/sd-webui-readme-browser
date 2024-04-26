@@ -1,40 +1,11 @@
 import os
-from dataclasses import dataclass
+from pathlib import Path
+from threading import Thread
 import gradio as gr
-from modules import extensions, util, paths_internal
 from readme_browser.tools import getURLsFromFile, isLocalURL, isAnchor, isMarkdown
-from readme_browser.options import needHideDisabledExtensions
-
-
-@dataclass
-class ReadmeFileData:
-    filePath: str
-    extPath: str
-
-
-readmeFilesByExtName: dict[str, ReadmeFileData] = {}
-
-def initReadmeFiles():
-    global readmeFilesByExtName
-    readmeFilesByExtName = {}
-
-    webuiPath = paths_internal.data_path
-    webuiName = os.path.basename(webuiPath)
-    files = util.listfiles(webuiPath)
-    for file in files:
-        if os.path.basename(file).lower() == 'readme.md':
-            readmeFilesByExtName[webuiName] = ReadmeFileData(file, webuiPath)
-            break
-
-    for ext in extensions.extensions:
-        if needHideDisabledExtensions() and not ext.enabled: continue
-        files = util.listfiles(ext.path)
-        for file in files:
-            if os.path.basename(file).lower() == 'readme.md':
-                readmeFilesByExtName[ext.name] = ReadmeFileData(file, ext.path)
-                break
-
-
+from readme_browser.options import needCache
+from readme_browser.cache import cache
+from readme_browser import readme_files
 
 
 JS_PREFIX = 'readme_browser_javascript_'
@@ -42,6 +13,7 @@ JS_PREFIX = 'readme_browser_javascript_'
 def renderMarkdownFile(filePath: str, extDir: str):
     with open(filePath) as f:
         file = f.read()
+    extName = os.path.basename(extDir)
 
     for url in getURLsFromFile(file):
         originalURL = url
@@ -53,6 +25,8 @@ def renderMarkdownFile(filePath: str, extDir: str):
         if 'github.com' in url and '/blob/' in url:
             url = url.split('/blob/')[-1]
             url = url.removeprefix(url.split('/')[0])
+            if '?' in url:
+                url = url.removesuffix('?' + url.split('?')[-1])
 
         if isLocalURL(url):
             if isAnchor(url): continue
@@ -68,6 +42,11 @@ def renderMarkdownFile(filePath: str, extDir: str):
                 else:
                     replacementUrl = f'file={urlFullPath}'
 
+        if replacementUrl is None and needCache():
+            cachedFile = cache(originalURL, extName)
+            if cachedFile:
+                replacementUrl = f'file={cachedFile}'
+
         if replacementUrl is not None:
             file = file.replace(originalURL, replacementUrl)
 
@@ -77,7 +56,7 @@ def renderMarkdownFile(filePath: str, extDir: str):
 def selectExtension(extName: str):
     if extName == "None":
         return "", ""
-    data = readmeFilesByExtName[extName]
+    data = readme_files.readmeFilesByExtName[extName]
     file = renderMarkdownFile(data.filePath, data.extPath)
     return file, data.extPath
 
@@ -92,7 +71,7 @@ def openSubFile(filePath: str, extPath: str):
 markdownFile = gr.Markdown("", elem_classes=['readme-browser-file'], elem_id='readme_browser_file')
 
 def getTabUI():
-    initReadmeFiles()
+    readme_files.initReadmeFiles()
 
     with gr.Blocks() as tab:
         dummy_component = gr.Textbox("", visible=False)
@@ -102,7 +81,7 @@ def getTabUI():
             selectedExtension = gr.Dropdown(
                 label="Extension",
                 value="None",
-                choices=["None"] + list(readmeFilesByExtName.keys())
+                choices=["None"] + list(readme_files.readmeFilesByExtName.keys())
             )
             selectButton = gr.Button('Select')
             selectButton.click(
@@ -128,3 +107,19 @@ def getTabUI():
         )
 
     return tab
+
+
+def cacheAll(demo, app):
+    def func():
+        isFirst = True
+        for _, data in readme_files.readmeFilesByExtName.items():
+            if isFirst:
+                isFirst = False
+                continue
+            try:
+                for mdFile in Path(data.extPath).rglob('*.md'):
+                    _ = renderMarkdownFile(mdFile, data.extPath)
+            except Exception as e:
+                print(f'Error on creating cache on startup, data.extPath = {data.extPath}')
+                print(e)
+    Thread(target=func).start()

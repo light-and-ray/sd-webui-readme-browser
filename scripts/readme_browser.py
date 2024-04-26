@@ -1,7 +1,7 @@
 import gradio as gr
 from modules import script_callbacks
-from readme_browser.main import getTabUI
-from readme_browser.options import needUseOnUICallback
+from readme_browser.main import getTabUI, cacheAll
+from readme_browser.options import needUseOnUICallback, needCacheOnStartup
 
 
 def onUITabs():
@@ -23,3 +23,7 @@ if needUseOnUICallback():
     script_callbacks.on_ui_tabs(onUITabs)
 else:
     script_callbacks.on_after_component(addTabInExtensionsTab)
+
+
+if needCacheOnStartup():
+    script_callbacks.on_app_started(cacheAll)
