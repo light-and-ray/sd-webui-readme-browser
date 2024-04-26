@@ -11,7 +11,7 @@ from readme_browser import readme_files
 JS_PREFIX = 'readme_browser_javascript_'
 
 def renderMarkdownFile(filePath: str, extDir: str):
-    with open(filePath) as f:
+    with open(filePath, mode='r', encoding="utf-8-sig") as f:
         file = f.read()
     extName = os.path.basename(extDir)
 
