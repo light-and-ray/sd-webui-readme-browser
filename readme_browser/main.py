@@ -30,10 +30,11 @@ def renderMarkdownFile(filePath: str, extDir: str):
             else:
                 urlFullPath = os.path.join(os.path.dirname(filePath), url)
 
-            if isMarkdown(url) and os.path.exists(urlFullPath):
-                replacementUrl = f"{JS_PREFIX}readme_browser_openSubFile('{urlFullPath}')"
-            else:
-                replacementUrl = f'file={urlFullPath}'
+            if os.path.exists(urlFullPath):
+                if isMarkdown(url):
+                    replacementUrl = f"{JS_PREFIX}readme_browser_openSubFile('{urlFullPath}')"
+                else:
+                    replacementUrl = f'file={urlFullPath}'
 
         if replacementUrl is not None:
             file = file.replace(originalURL, replacementUrl)
@@ -68,7 +69,7 @@ def initReadmeFiles():
             break
 
     for ext in extensions.extensions:
-        if not ext.enabled: continue
+        # if not ext.enabled: continue
         files = util.listfiles(ext.path)
         for file in files:
             if os.path.basename(file).lower() == 'readme.md':

@@ -7,7 +7,7 @@ def getURLsFromFile(file: str) -> list[str]:
     MDLinks = re.findall(r'\[.*?\]\(.+?\)', file)
     for link in MDLinks:
         tmp: str = link.replace(r'\(', '')
-        tmp = link.split('(')[-1]
+        tmp = tmp.split('(')[-1]
         url = tmp.removesuffix(')')
         urls.add(url)
 
@@ -32,5 +32,5 @@ def isAnchor(url: str):
 
 def isMarkdown(url: str):
     if '#' in url:
-        url = url.removesuffix(url.split('#')[-1])
+        url = url.removesuffix('#' + url.split('#')[-1])
     return url.endswith('.md')
