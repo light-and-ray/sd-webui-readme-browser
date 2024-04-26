@@ -3,6 +3,7 @@
     margin-right: auto !important;
     margin-left: auto !important;
     font-size-adjust: 0.55 !important;
+    overflow-wrap: break-word;
 }
 
 .readme-browser-file table {
