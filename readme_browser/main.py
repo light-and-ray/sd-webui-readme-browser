@@ -3,9 +3,41 @@ from dataclasses import dataclass
 import gradio as gr
 from modules import extensions, util, paths_internal
 from readme_browser.tools import getURLsFromFile, isLocalURL, isAnchor, isMarkdown
+from readme_browser.options import needHideDisabledExtensions
+
+
+@dataclass
+class ReadmeFileData:
+    filePath: str
+    extPath: str
+
+
+readmeFilesByExtName: dict[str, ReadmeFileData] = {}
+
+def initReadmeFiles():
+    global readmeFilesByExtName
+    readmeFilesByExtName = {}
+
+    webuiPath = paths_internal.data_path
+    webuiName = os.path.basename(webuiPath)
+    files = util.listfiles(webuiPath)
+    for file in files:
+        if os.path.basename(file).lower() == 'readme.md':
+            readmeFilesByExtName[webuiName] = ReadmeFileData(file, webuiPath)
+            break
+
+    for ext in extensions.extensions:
+        if needHideDisabledExtensions() and not ext.enabled: continue
+        files = util.listfiles(ext.path)
+        for file in files:
+            if os.path.basename(file).lower() == 'readme.md':
+                readmeFilesByExtName[ext.name] = ReadmeFileData(file, ext.path)
+                break
+
+
+
 
 JS_PREFIX = 'readme_browser_javascript_'
-
 
 def renderMarkdownFile(filePath: str, extDir: str):
     with open(filePath) as f:
@@ -50,36 +82,11 @@ def selectExtension(extName: str):
     return file, data.extPath
 
 
-@dataclass
-class ReadmeFileData:
-    filePath: str
-    extPath: str
-
-
-readmeFilesByExtName: dict[str, ReadmeFileData] = {}
-
-def initReadmeFiles():
-    global readmeFilesByExtName
-    webuiPath = paths_internal.data_path
-    webuiName = os.path.basename(webuiPath)
-    files = util.listfiles(webuiPath)
-    for file in files:
-        if os.path.basename(file).lower() == 'readme.md':
-            readmeFilesByExtName[webuiName] = ReadmeFileData(file, webuiPath)
-            break
-
-    for ext in extensions.extensions:
-        # if not ext.enabled: continue
-        files = util.listfiles(ext.path)
-        for file in files:
-            if os.path.basename(file).lower() == 'readme.md':
-                readmeFilesByExtName[ext.name] = ReadmeFileData(file, ext.path)
-                break
-
-
 def openSubFile(filePath: str, extPath: str):
     file = renderMarkdownFile(filePath, extPath)
     return file
+
+
 
 
 markdownFile = gr.Markdown("", elem_classes=['readme-browser-file'], elem_id='readme_browser_file')

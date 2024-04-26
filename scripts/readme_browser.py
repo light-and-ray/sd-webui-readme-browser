@@ -1,12 +1,13 @@
 import gradio as gr
 from modules import script_callbacks
 from readme_browser.main import getTabUI
+from readme_browser.options import needUseOnUICallback
 
-# def onUITabs():
-#     tab = getTabUI()
-#     return [(tab, "Readme files", "readme_files")]
 
-# script_callbacks.on_ui_tabs(onUITabs)
+def onUITabs():
+    tab = getTabUI()
+    return [(tab, "Readme files", "readme_files")]
+
 
 def addTabInExtensionsTab(component, **kwargs):
     if kwargs.get('elem_id', "") != 'extensions_backup_top_row':
@@ -18,4 +19,7 @@ def addTabInExtensionsTab(component, **kwargs):
             getTabUI()
 
 
-script_callbacks.on_after_component(addTabInExtensionsTab)
+if needUseOnUICallback():
+    script_callbacks.on_ui_tabs(onUITabs)
+else:
+    script_callbacks.on_after_component(addTabInExtensionsTab)
