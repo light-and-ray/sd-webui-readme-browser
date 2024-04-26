@@ -3,6 +3,9 @@ import urllib.request
 from threading import Thread
 from readme_browser.options import getCacheLocation
 
+opener = urllib.request.build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+urllib.request.install_opener(opener)
 
 def needCacheURL(url: str):
     url = url.lower()
@@ -35,10 +38,8 @@ def cache(url: str, extName: str) -> str|None:
                 try:
                     time.sleep(1)
                     urllib.request.urlretrieve(url, outPath)
-                    print(f'readme_browser cached file {url}')
+                    print(f'readme_browser cached file {url}, extName = {extName}')
                 except Exception as e:
-                    # print(f'Error while caching file {url}, extName = {extName}')
-                    # print(e)
                     pass
             Thread(target=func).start()
 
