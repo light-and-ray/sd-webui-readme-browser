@@ -10,6 +10,6 @@ Supported things:
 1. Local anchors
 1. External links and media work as usual, and requires the Internet connection, of course
 
-You can adjust few settings:
+You can adjust few settings. Defaults are in the screenshot:
 
 ![](/img/img2.jpg)
