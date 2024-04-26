@@ -20,7 +20,7 @@ function readme_browser_convertUrls() {
     hElements.forEach((h) => {
         if (!h.innerHTML) return;
         let anchor = document.createElement('a');
-        let anchorID = h.innerHTML.toLowerCase().replace(' ', '-');
+        let anchorID = h.innerHTML.toLowerCase().replaceAll(' ', '-');
         if (anchorID in anchorNumbers) {
             let key = anchorID;
             anchorID += '-' + anchorNumbers[key];
