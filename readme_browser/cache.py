@@ -7,9 +7,15 @@ opener = urllib.request.build_opener()
 opener.addheaders = [('User-agent', 'Mozilla/5.0')]
 urllib.request.install_opener(opener)
 
+ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.webp', '.gif', '.mp4', '.webm']
+
 def needCacheURL(url: str):
     url = url.lower()
+    hasAllowedExt = any(url.endswith(x) for x in ALLOWED_EXTENSIONS)
+
     if 'github.com' in url and '/assets/' in url:
+        return True
+    if 'github.com' in url and '/blob/' in url and hasAllowedExt:
         return True
     if 'githubusercontent.com' in url:
         return True
