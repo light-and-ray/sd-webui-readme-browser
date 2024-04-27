@@ -42,7 +42,7 @@ def renderMarkdownFile(filePath: str, extDir: str):
                 else:
                     replacementUrl = f'file={urlFullPath}'
 
-        if replacementUrl is None and needCache():
+        if replacementUrl is None and needCache() and not isLocalURL(originalURL):
             cachedFile = cache(originalURL, extName)
             if cachedFile:
                 replacementUrl = f'file={cachedFile}'
@@ -89,8 +89,8 @@ def getTabUI():
                 inputs=[selectedExtension],
                 outputs=[markdownFile, extPath],
             ).then(
-            fn=None,
-            _js='readme_browser_convertUrls',
+                fn=None,
+                _js='readme_browser_afterRender',
             )
         with gr.Row():
             markdownFile.render()
@@ -103,7 +103,7 @@ def getTabUI():
             outputs=[markdownFile]
         ).then(
             fn=None,
-            _js='readme_browser_convertUrls',
+            _js='readme_browser_afterRender',
         )
 
     return tab

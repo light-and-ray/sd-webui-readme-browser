@@ -13,7 +13,7 @@ function readme_browser_openSubFile(filePath) {
 }
 
 
-function readme_browser_convertUrls() {
+function readme_browser_afterRender() {
     file = gradioApp().getElementById('readme_browser_file');
     hElements = [...file.querySelectorAll("h1, h2, h3, h4, h5, h6")];
     let anchorNumbers = {};
