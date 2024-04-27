@@ -42,10 +42,13 @@ def cache(url: str, extName: str) -> str|None:
         else:
             def func():
                 try:
+                    nonlocal url
                     time.sleep(1)
+                    url += '?raw=true'
                     urllib.request.urlretrieve(url, outPath)
                     print(f'readme_browser cached file {url}, extName = {extName}')
                 except Exception as e:
+                    # print(e)
                     pass
             Thread(target=func).start()
 
