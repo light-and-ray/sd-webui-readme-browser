@@ -26,7 +26,7 @@ def getURLsFromFile(file: str) -> list[str]:
 
 
 def isLocalURL(url: str):
-    return '://' not in url
+    return not ('://' in url or url.startswith('//'))
 
 def isAnchor(url: str):
     return url.startswith('#')

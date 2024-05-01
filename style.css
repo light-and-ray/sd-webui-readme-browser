@@ -2,7 +2,7 @@
     max-width: 1012px;
     margin-right: auto !important;
     margin-left: auto !important;
-    font-size-adjust: 0.55 !important;
+    font-size: 106% !important;
     overflow-wrap: break-word;
 }
 
@@ -12,9 +12,28 @@
 }
 
 .readme-browser-file strong {
-    font-size-adjust: 0.58 !important;
+    font-size: 105% !important;
 }
 
-.readme-browser-file a {
+.readme-browser-file a[href] {
     text-decoration: underline dotted !important;
+    position: relative;
+}
+
+.readme-browser-file a[href]:where([href="#"]):after {
+    content: '↪';
+    font-size: 50% !important;
+}
+
+.readme-browser-file ol li {
+    display: inline !important;
+}
+
+.readme-browser-file li {
+    margin-bottom: 0 !important;
+}
+
+.readme-browser-file p {
+    line-height: 1.5 !important;
+    margin-bottom: 16px !important;
 }
