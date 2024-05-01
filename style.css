@@ -17,12 +17,12 @@
 
 .readme-browser-file a[href] {
     text-decoration: underline dotted !important;
-    position: relative;
 }
 
 .readme-browser-file a[href]:where([href="#"]):after {
     content: '↪';
-    font-size: 50% !important;
+    font-size: 60% !important;
+    font-family: monospace;
 }
 
 .readme-browser-file ol li {
