@@ -14,7 +14,7 @@ function readme_browser_openSubFile(filePath) {
 
 
 function readme_browser_alreadyHasAnchor(h) {
-    elem = h.previousSibling;
+    let elem = h.previousSibling;
     if (!elem?.classList?.contains('readme_browser_h_anchor')) return false;
     return true;
 }
