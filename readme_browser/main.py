@@ -4,7 +4,7 @@ from pathlib import Path
 from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
-    makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheAllDatetime,
+    makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheAllDatetime, hasAllowedExt,
 )
 
 from readme_browser.options import needCache
@@ -50,7 +50,7 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
 
         if isLocalURL(url):
             if isAnchor(url): continue
-            if isWiki and '.' not in url:
+            if isWiki and not hasAllowedExt(url):
                 url += '.md'
 
             if url[0] == '/':

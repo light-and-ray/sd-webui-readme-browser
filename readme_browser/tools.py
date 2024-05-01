@@ -1,5 +1,6 @@
 import re, datetime, os
 from modules.gitpython_hack import Repo
+from modules import errors
 from readme_browser.options import EXT_ROOT_DIRECTORY
 
 JS_PREFIX = 'readme_browser_javascript_'
@@ -98,3 +99,20 @@ def readLastCacheAllDatetime() -> datetime.datetime:
         with open(lastCacheAllDatetimeFile, 'r') as f:
             dt = datetime.datetime.strptime(f.readline().removesuffix('\n'), "%d-%b-%Y (%H:%M:%S.%f)")
     return dt
+
+
+def enoughtTimeLeftForCache() -> bool:
+    last = None
+    try:
+        last = readLastCacheAllDatetime()
+    except Exception as e:
+        errors.report(f"Can't readLastCacheAllDatetime {e}", exc_info=True)
+
+    return not last or datetime.datetime.now() - last >= datetime.timedelta(hours=72)
+
+
+
+def hasAllowedExt(url: str):
+    url = url.lower()
+    ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.webp', '.gif', '.mp4', '.webm']
+    return any(url.endswith(x) for x in ALLOWED_EXTENSIONS)

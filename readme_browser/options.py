@@ -63,7 +63,7 @@ options = {
 
     "readme_browser_need_cache_on_startup": shared.OptionInfo(
         False,
-        "Cache these media and wikis for all extensions on the webui startup if last cache was made >= 24 hours ago",
+        "Cache these media and wikis for all extensions on the webui startup if last cache was made >= 72 hours ago",
         gr.Checkbox,
         section=section,
     ).needs_reload_ui(),
