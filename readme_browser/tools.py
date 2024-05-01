@@ -3,7 +3,7 @@ import urllib.parse
 from pathlib import Path
 from modules.gitpython_hack import Repo
 from modules import errors, paths_internal
-from readme_browser.options import EXT_ROOT_DIRECTORY
+from readme_browser.options import EXT_ROOT_DIRECTORY, getCacheLocation
 
 JS_PREFIX = 'readme_browser_javascript_'
 
@@ -89,24 +89,25 @@ def makeOpenRepoLink(extPath: str):
     return f"[Open {siteName}]({url})↗"
 
 
-lastCacheAllDatetimeFile = os.path.join(EXT_ROOT_DIRECTORY, 'lastCacheAllDatetime')
-
-def saveLastCacheAllDatetime():
-    with open(lastCacheAllDatetimeFile, 'w') as f:
+def saveLastCacheDatetime(extName: str):
+    file = os.path.join(getCacheLocation(), f'lastCacheDatetime - {extName}')
+    with open(file, 'w') as f:
         f.write(datetime.datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
 
-def readLastCacheAllDatetime() -> datetime.datetime:
+
+def readLastCacheDatetime(extName: str) -> datetime.datetime:
     dt = None
-    if os.path.exists(lastCacheAllDatetimeFile):
-        with open(lastCacheAllDatetimeFile, 'r') as f:
+    file = os.path.join(getCacheLocation(), f'lastCacheDatetime - {extName}')
+    if os.path.exists(file):
+        with open(file, 'r') as f:
             dt = datetime.datetime.strptime(f.readline().removesuffix('\n'), "%d-%b-%Y (%H:%M:%S.%f)")
     return dt
 
 
-def enoughtTimeLeftForCache() -> bool:
+def enoughtTimeLeftForCache(extName: str) -> bool:
     last = None
     try:
-        last = readLastCacheAllDatetime()
+        last = readLastCacheDatetime(extName)
     except Exception as e:
         errors.report(f"Can't readLastCacheAllDatetime {e}", exc_info=True)
 

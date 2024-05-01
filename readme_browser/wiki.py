@@ -3,7 +3,7 @@ import urllib.parse
 from git import Repo
 from modules import util
 from readme_browser.options import DEFAULT_WIKI_LOCATION
-from readme_browser.tools import JS_PREFIX, enoughtTimeLeftForCache, saveLastCacheAllDatetime
+from readme_browser.tools import JS_PREFIX, enoughtTimeLeftForCache
 
 
 def makeDummySidebar(dirPath: str) -> str:

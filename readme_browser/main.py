@@ -4,8 +4,8 @@ from pathlib import Path
 from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
-    makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheAllDatetime, hasAllowedExt,
-    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES,
+    makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheDatetime, hasAllowedExt,
+    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES, enoughtTimeLeftForCache,
 )
 
 from readme_browser.options import needCache
@@ -81,6 +81,8 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
             replacementUrl = urllib.parse.quote(replacementUrl)
             file = replaceURLInFile(file, originalURL, replacementUrl)
 
+    if enoughtTimeLeftForCache(extName):
+        saveLastCacheDatetime(extName)
     return file
 
 
@@ -166,6 +168,8 @@ def getTabUI():
 def cacheAll(demo, app):
     def func():
         for extName, data in readme_files.readmeFilesByExtName.items():
+            if not enoughtTimeLeftForCache(extName):
+                continue
             if extName in SPECIAL_EXTENSION_NAMES:
                 continue
             try:
@@ -175,6 +179,5 @@ def cacheAll(demo, app):
                 print(f'Error on creating cache on startup, data.extPath = {data.extPath}')
                 print(e)
         time.sleep(60)
-        saveLastCacheAllDatetime()
 
     Thread(target=func).start()

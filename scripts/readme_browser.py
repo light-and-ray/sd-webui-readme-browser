@@ -3,7 +3,6 @@ import gradio as gr
 from modules import script_callbacks, errors
 from readme_browser.main import getTabUI, cacheAll
 from readme_browser.options import needUseOnUICallback, needCacheOnStartup
-from readme_browser.tools import enoughtTimeLeftForCache
 
 
 def onUITabs():
@@ -32,6 +31,5 @@ else:
 
 
 if needCacheOnStartup():
-    if enoughtTimeLeftForCache():
-        script_callbacks.on_app_started(cacheAll)
+    script_callbacks.on_app_started(cacheAll)
         
