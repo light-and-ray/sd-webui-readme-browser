@@ -90,14 +90,15 @@ def makeOpenRepoLink(extPath: str):
 
 
 def saveLastCacheDatetime(extName: str):
-    file = os.path.join(getCacheLocation(), f'lastCacheDatetime - {extName}')
+    file = os.path.join(getCacheLocation(), extName, 'lastCacheDatetime')
+    os.makedirs(os.path.dirname(file), exist_ok=True)
     with open(file, 'w') as f:
         f.write(datetime.datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
 
 
 def readLastCacheDatetime(extName: str) -> datetime.datetime:
     dt = None
-    file = os.path.join(getCacheLocation(), f'lastCacheDatetime - {extName}')
+    file = os.path.join(getCacheLocation(), extName, 'lastCacheDatetime')
     if os.path.exists(file):
         with open(file, 'r') as f:
             dt = datetime.datetime.strptime(f.readline().removesuffix('\n'), "%d-%b-%Y (%H:%M:%S.%f)")
