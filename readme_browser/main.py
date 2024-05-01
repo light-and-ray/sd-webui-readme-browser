@@ -100,10 +100,12 @@ def openSubFile(filePath: str, extPath: str, extName: str):
     return file
 
 
-def openWiki(repoName, repoPath):
-    path = getwikiFilePath(repoName, repoPath)
-    file = renderMarkdownFile(path, os.path.dirname(path), f'wiki - {repoName}')
-    return file
+def openWiki(wikiName, filePath):
+    filePath = getwikiFilePath(wikiName, filePath)
+    dirPath = os.path.dirname(filePath)
+    file = renderMarkdownFile(filePath, dirPath, f'wiki - {wikiName}')
+    openRepo = makeOpenRepoLink(dirPath)
+    return file, filePath, wikiName, openRepo
 
 
 
@@ -156,7 +158,7 @@ def getTabUI():
             fn=openWiki,
             _js="readme_browser_openWiki_",
             inputs=[dummy_component, dummy_component],
-            outputs=[markdownFile]
+            outputs=[markdownFile, extPath, extName, openRepo]
         ).then(
             fn=None,
             _js='readme_browser_afterRender',

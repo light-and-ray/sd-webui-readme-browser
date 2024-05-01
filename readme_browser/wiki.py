@@ -40,10 +40,10 @@ def getLocalWikiURL(url: str) -> str:
         url += '/'
     tmp = url.split('/wiki/')
     repoURL = f'{tmp[0]}.wiki.git'
-    repoName = tmp[0].split('/')[-2] + " - " + tmp[0].split('/')[-1]
-    repoPath = tmp[1]
+    wikiName = tmp[0].split('/')[-2] + " - " + tmp[0].split('/')[-1]
+    filePath = tmp[1]
 
-    dirPath = os.path.join(DEFAULT_WIKI_LOCATION, repoName)
+    dirPath = os.path.join(DEFAULT_WIKI_LOCATION, wikiName)
     try:
         if not os.path.exists(dirPath):
             Repo.clone_from(repoURL, dirPath)
@@ -55,12 +55,12 @@ def getLocalWikiURL(url: str) -> str:
         # print(f"Cannot clone wiki {repoURL}:", e)
         pass
 
-    link = f"{JS_PREFIX}readme_browser_openWiki('{repoName}', '{repoPath}')"
+    link = f"{JS_PREFIX}readme_browser_openWiki('{wikiName}', '{filePath}')"
     return link
 
 
-def getwikiFilePath(repoName, fileName):
-    dirPath = os.path.join(DEFAULT_WIKI_LOCATION, repoName)
+def getwikiFilePath(wikiName, fileName):
+    dirPath = os.path.join(DEFAULT_WIKI_LOCATION, wikiName)
     if not fileName:
         fileName = 'Home.md'
     else:

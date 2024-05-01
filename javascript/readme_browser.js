@@ -13,16 +13,16 @@ function readme_browser_openSubFile(filePath) {
 }
 
 
-var readme_browser_repoName = undefined;
-var readme_browser_repoPath = undefined;
+var readme_browser_wikiName = undefined;
+var readme_browser_filePath = undefined;
 
 function readme_browser_openWiki_(dummy1, dummy2) {
-    return [readme_browser_repoName, readme_browser_repoPath];
+    return [readme_browser_wikiName, readme_browser_filePath];
 }
 
-function readme_browser_openWiki(repoName, repoPath) {
-    readme_browser_repoName = decodeURI(repoName);
-    readme_browser_repoPath = decodeURI(repoPath);
+function readme_browser_openWiki(wikiName, filePath) {
+    readme_browser_wikiName = decodeURI(wikiName);
+    readme_browser_filePath = decodeURI(filePath);
     button = gradioApp().getElementById('readme_browser_openWikiButton');
     button.click();
 }

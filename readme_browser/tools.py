@@ -84,7 +84,11 @@ def makeOpenRepoLink(extPath: str):
 
     siteName = 'repository'
     if 'github.com' in url.lower():
-        siteName = 'GitHub page'
+        if url.endswith('.wiki.git'):
+            siteName = 'wiki on GitHub'
+            url = url.removesuffix('.wiki.git') + '/wiki'
+        else:
+            siteName = 'GitHub page'
 
     return f"[Open {siteName}]({url})↗"
 
