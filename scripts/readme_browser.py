@@ -1,5 +1,5 @@
 import gradio as gr
-from modules import script_callbacks
+from modules import script_callbacks, errors
 from readme_browser.main import getTabUI, cacheAll
 from readme_browser.options import needUseOnUICallback, needCacheOnStartup
 
@@ -10,13 +10,17 @@ def onUITabs():
 
 
 def addTabInExtensionsTab(component, **kwargs):
-    if kwargs.get('elem_id', "") != 'extensions_backup_top_row':
-        return
-    tabs = component.parent.parent
+    try:
+        if kwargs.get('elem_id', "") != 'extensions_backup_top_row':
+            return
+        tabs = component.parent.parent
 
-    with tabs:
-        with gr.Tab("Readme files", elem_id="readme_files_tab"):
-            getTabUI()
+        with tabs:
+            with gr.Tab("Readme files", elem_id="readme_files_tab"):
+                getTabUI()
+
+    except Exception as e:
+        errors.report(f"Can't add Readme files tab", exc_info=True)
 
 
 if needUseOnUICallback():

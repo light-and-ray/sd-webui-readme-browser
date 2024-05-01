@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from threading import Thread
 import gradio as gr
-from readme_browser.tools import getURLsFromFile, isLocalURL, isAnchor, isMarkdown
+from readme_browser.tools import getURLsFromFile, isLocalURL, isAnchor, isMarkdown, makeOpenRepoLink
 from readme_browser.options import needCache
 from readme_browser.cache import cache
 from readme_browser import readme_files
@@ -55,10 +55,11 @@ def renderMarkdownFile(filePath: str, extDir: str):
 
 def selectExtension(extName: str):
     if extName not in readme_files.readmeFilesByExtName.keys():
-        return "", ""
+        return "", "", ""
     data = readme_files.readmeFilesByExtName[extName]
     file = renderMarkdownFile(data.filePath, data.extPath)
-    return file, data.extPath
+    openRepo = makeOpenRepoLink(data.extPath)
+    return file, data.extPath, openRepo
 
 
 def openSubFile(filePath: str, extPath: str):
@@ -69,6 +70,7 @@ def openSubFile(filePath: str, extPath: str):
 
 
 markdownFile = gr.Markdown("", elem_classes=['readme-browser-file'], elem_id='readme_browser_file')
+openRepo = gr.Markdown("", elem_classes=['readme-browser-open-repo'], elem_id='readme_browser_open_repo')
 
 def getTabUI():
     readme_files.initReadmeFiles()
@@ -87,13 +89,17 @@ def getTabUI():
             selectButton.click(
                 fn=selectExtension,
                 inputs=[selectedExtension],
-                outputs=[markdownFile, extPath],
+                outputs=[markdownFile, extPath, openRepo],
             ).then(
                 fn=None,
                 _js='readme_browser_afterRender',
             )
+
         with gr.Row():
             markdownFile.render()
+
+        with gr.Row():
+            openRepo.render()
 
         openSubFileButton = gr.Button("", visible=False, elem_id="readme_browser_openSubFileButton")
         openSubFileButton.click(
