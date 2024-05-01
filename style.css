@@ -11,3 +11,11 @@
     overflow-x: auto;
     white-space: nowrap;
 }
+
+.readme-browser-file strong {
+    font-size-adjust: 0.58 !important;
+}
+
+.readme-browser-file a {
+    text-decoration: underline dotted !important;
+}
