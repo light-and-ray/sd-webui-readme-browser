@@ -5,7 +5,7 @@ from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
     makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheAllDatetime, hasAllowedExt,
-    makeAllMarkdownFilesList,
+    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES,
 )
 
 from readme_browser.options import needCache
@@ -35,10 +35,9 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
         
         file += '\n\n-----------\nSidebar\n-------------\n\n' + sidebar
     else:
-        if extName != 'sd-webui-readme-browser':
-            allMarkdownFilesList = makeAllMarkdownFilesList(extDir)
-            if allMarkdownFilesList:
-                file += '\n\n-----------\nAll markdown files\n-------------\n\n' + allMarkdownFilesList
+        allMarkdownFilesList = makeAllMarkdownFilesList(extDir)
+        if allMarkdownFilesList:
+            file += '\n\n-----------\nAll markdown files\n-------------\n\n' + allMarkdownFilesList
 
 
     for url in getURLsFromFile(file):
@@ -166,12 +165,8 @@ def getTabUI():
 
 def cacheAll(demo, app):
     def func():
-        isFirst = True
         for extName, data in readme_files.readmeFilesByExtName.items():
-            if isFirst:
-                isFirst = False
-                continue
-            if extName == 'sd-webui-readme-browser':
+            if extName in SPECIAL_EXTENSION_NAMES:
                 continue
             try:
                 for mdFile in Path(data.extPath).rglob('*.md'):

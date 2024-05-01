@@ -2,7 +2,7 @@ import re, datetime, os
 import urllib.parse
 from pathlib import Path
 from modules.gitpython_hack import Repo
-from modules import errors
+from modules import errors, paths_internal
 from readme_browser.options import EXT_ROOT_DIRECTORY
 
 JS_PREFIX = 'readme_browser_javascript_'
@@ -120,8 +120,16 @@ def hasAllowedExt(url: str):
     return any(url.endswith(x) for x in ALLOWED_EXTENSIONS)
 
 
+SPECIAL_EXTENSION_NAMES = [os.path.basename(EXT_ROOT_DIRECTORY), os.path.basename(paths_internal.data_path)]
+
+
 def makeAllMarkdownFilesList(extPath: str) -> str:
+    if os.path.basename(extPath) in SPECIAL_EXTENSION_NAMES:
+        return None
+
     allMarkdownFilesList = ''
+    number = 0
+
     for filePath in Path(extPath).rglob('*.md'):
         fileName = os.path.basename(filePath)
         if not fileName.endswith('.md'): continue
@@ -129,5 +137,11 @@ def makeAllMarkdownFilesList(extPath: str) -> str:
         if fileName.startswith('.'): continue
         fullFileName = os.path.relpath(filePath, extPath)
         if fullFileName.startswith('.'): continue
+        if fullFileName.startswith('venv'): continue
         allMarkdownFilesList += f"[{fullFileName}](/{urllib.parse.quote(fullFileName)})\n"
+        number += 1
+
+    if number <= 1:
+        return None
+
     return allMarkdownFilesList
