@@ -13,11 +13,19 @@ function readme_browser_openSubFile(filePath) {
 }
 
 
+function readme_browser_alreadyHasAnchor(h) {
+    elem = h.previousSibling;
+    if (!elem?.classList?.contains('readme_browser_h_anchor')) return false;
+    return true;
+}
+
+
 function readme_browser_afterRender() {
     file = gradioApp().getElementById('readme_browser_file');
     hElements = [...file.querySelectorAll("h1, h2, h3, h4, h5, h6")];
     let anchorNumbers = {};
     hElements.forEach((h) => {
+        if (readme_browser_alreadyHasAnchor(h)) return;
         if (!h.innerHTML) return;
         let anchor = document.createElement('a');
         let anchorID = h.innerHTML.toLowerCase().replaceAll(' ', '-').replaceAll("'", '');
@@ -29,6 +37,7 @@ function readme_browser_afterRender() {
             anchorNumbers[anchorID] = 1;
         }
         anchor.setAttribute('id', anchorID);
+        anchor.classList.add('readme_browser_h_anchor');
         h.parentNode.insertBefore(anchor, h);
     });
 
