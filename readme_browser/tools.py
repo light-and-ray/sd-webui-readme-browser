@@ -1,5 +1,6 @@
-import re
+import re, datetime, os
 from modules.gitpython_hack import Repo
+from readme_browser.options import EXT_ROOT_DIRECTORY
 
 JS_PREFIX = 'readme_browser_javascript_'
 
@@ -83,3 +84,17 @@ def makeOpenRepoLink(extPath: str):
         siteName = 'GitHub page'
 
     return f"[Open {siteName}]({url})↗"
+
+
+lastCacheAllDatetimeFile = os.path.join(EXT_ROOT_DIRECTORY, 'lastCacheAllDatetime')
+
+def saveLastCacheAllDatetime():
+    with open(lastCacheAllDatetimeFile, 'w') as f:
+        f.write(datetime.datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+
+def readLastCacheAllDatetime() -> datetime.datetime:
+    dt = None
+    if os.path.exists(lastCacheAllDatetimeFile):
+        with open(lastCacheAllDatetimeFile, 'r') as f:
+            dt = datetime.datetime.strptime(f.readline().removesuffix('\n'), "%d-%b-%Y (%H:%M:%S.%f)")
+    return dt

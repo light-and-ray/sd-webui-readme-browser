@@ -1,10 +1,10 @@
-import os
+import os, time
 import urllib.parse
 from pathlib import Path
 from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
-    makeOpenRepoLink, JS_PREFIX, replaceURLInFile,
+    makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheAllDatetime,
 )
 
 from readme_browser.options import needCache
@@ -173,4 +173,7 @@ def cacheAll(demo, app):
             except Exception as e:
                 print(f'Error on creating cache on startup, data.extPath = {data.extPath}')
                 print(e)
+        time.sleep(60)
+        saveLastCacheAllDatetime()
+
     Thread(target=func).start()

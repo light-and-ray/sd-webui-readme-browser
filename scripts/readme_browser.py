@@ -1,7 +1,9 @@
+import datetime
 import gradio as gr
 from modules import script_callbacks, errors
 from readme_browser.main import getTabUI, cacheAll
 from readme_browser.options import needUseOnUICallback, needCacheOnStartup
+from readme_browser.tools import readLastCacheAllDatetime
 
 
 def onUITabs():
@@ -30,4 +32,9 @@ else:
 
 
 if needCacheOnStartup():
-    script_callbacks.on_app_started(cacheAll)
+    try:
+        last = readLastCacheAllDatetime()
+        if not last or datetime.datetime.now() - last >= datetime.timedelta(hours=24):
+            script_callbacks.on_app_started(cacheAll)
+    except Exception as e:
+        errors.report(f"Can't cache all readme files on start {e}", exc_info=True)

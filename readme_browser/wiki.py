@@ -44,13 +44,15 @@ def getLocalWikiURL(url: str) -> str:
     repoPath = tmp[1]
 
     dirPath = os.path.join(DEFAULT_WIKI_LOCATION, repoName)
-    if not os.path.exists(dirPath):
-        try:
+    try:
+        if not os.path.exists(dirPath):
             Repo.clone_from(repoURL, dirPath)
-        except Exception as e:
-            # print(f"Cannot clone wiki {repoURL}:", e)
-            pass
-    else:
+        else:
+            repo = Repo(dirPath)
+            repo.git.fetch(all=True)
+            repo.git.reset('origin', hard=True)
+    except Exception as e:
+        # print(f"Cannot clone wiki {repoURL}:", e)
         pass
 
     link = f"{JS_PREFIX}readme_browser_openWiki('{repoName}', '{repoPath}')"
