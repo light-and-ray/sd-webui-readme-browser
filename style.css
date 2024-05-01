@@ -9,7 +9,6 @@
 .readme-browser-file table {
     display: block;
     overflow-x: auto;
-    white-space: nowrap;
 }
 
 .readme-browser-file strong {
