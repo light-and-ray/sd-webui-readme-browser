@@ -32,6 +32,8 @@ def getCacheLocation():
     return res
 
 
+DEFAULT_WIKI_LOCATION = os.path.join(EXT_ROOT_DIRECTORY, 'wiki')
+
 
 section = ("readme_browser", "Readme browser")
 options = {

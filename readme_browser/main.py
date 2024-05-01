@@ -1,19 +1,39 @@
 import os
+import urllib.parse
 from pathlib import Path
 from threading import Thread
 import gradio as gr
-from readme_browser.tools import getURLsFromFile, isLocalURL, isAnchor, isMarkdown, makeOpenRepoLink
+from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
+    makeOpenRepoLink, JS_PREFIX, replaceURLInFile,
+)
+
 from readme_browser.options import needCache
 from readme_browser.cache import cache
 from readme_browser import readme_files
+from readme_browser.wiki import isWikiURL, getLocalWikiURL, makeDummySidebar, getwikiFilePath
 
 
-JS_PREFIX = 'readme_browser_javascript_'
+def renderMarkdownFile(filePath: str, extDir: str, extName: str):
+    isWiki = extName.startswith('wiki - ')
 
-def renderMarkdownFile(filePath: str, extDir: str):
     with open(filePath, mode='r', encoding="utf-8-sig") as f:
         file = f.read()
-    extName = os.path.basename(extDir)
+
+    if isWiki:
+        footerPath = os.path.join(os.path.dirname(filePath), '_Footer.md')
+        if os.path.exists(footerPath):
+            with open(footerPath, mode='r', encoding="utf-8-sig") as f:
+                file += '\n\n' + f.read()
+
+        sidebarPath = os.path.join(os.path.dirname(filePath), '_Sidebar.md')
+        if os.path.exists(sidebarPath):
+            with open(sidebarPath, mode='r', encoding="utf-8-sig") as f:
+                sidebar = f.read()
+        else:
+            sidebar = makeDummySidebar(os.path.dirname(filePath))
+        
+        file += '\n\n-----------\nSidebar\n-------------\n\n' + sidebar
+
 
     for url in getURLsFromFile(file):
         originalURL = url
@@ -30,6 +50,8 @@ def renderMarkdownFile(filePath: str, extDir: str):
 
         if isLocalURL(url):
             if isAnchor(url): continue
+            if isWiki and '.' not in url:
+                url += '.md'
 
             if url[0] == '/':
                 urlFullPath = os.path.join(extDir, url[1:])
@@ -42,30 +64,39 @@ def renderMarkdownFile(filePath: str, extDir: str):
                 else:
                     replacementUrl = f'file={urlFullPath}'
 
+        elif isWikiURL(url, extName):
+            replacementUrl = getLocalWikiURL(url)
+
         if replacementUrl is None and needCache() and not isLocalURL(originalURL):
             cachedFile = cache(originalURL, extName)
             if cachedFile:
                 replacementUrl = f'file={cachedFile}'
 
         if replacementUrl is not None:
-            file = file.replace(originalURL, replacementUrl)
+            replacementUrl = urllib.parse.quote(replacementUrl)
+            file = replaceURLInFile(file, originalURL, replacementUrl)
 
     return file
 
 
 def selectExtension(extName: str):
     if extName not in readme_files.readmeFilesByExtName.keys():
-        return "", "", ""
+        return "", "", "", ""
     data = readme_files.readmeFilesByExtName[extName]
-    file = renderMarkdownFile(data.filePath, data.extPath)
+    file = renderMarkdownFile(data.filePath, data.extPath, extName)
     openRepo = makeOpenRepoLink(data.extPath)
-    return file, data.extPath, openRepo
+    return file, data.extPath, extName, openRepo
 
 
-def openSubFile(filePath: str, extPath: str):
-    file = renderMarkdownFile(filePath, extPath)
+def openSubFile(filePath: str, extPath: str, extName: str):
+    file = renderMarkdownFile(filePath, extPath, extName)
     return file
 
+
+def openWiki(repoName, repoPath):
+    path = getwikiFilePath(repoName, repoPath)
+    file = renderMarkdownFile(path, os.path.dirname(path), f'wiki - {repoName}')
+    return file
 
 
 
@@ -78,6 +109,7 @@ def getTabUI():
     with gr.Blocks() as tab:
         dummy_component = gr.Textbox("", visible=False)
         extPath = gr.Textbox("", visible=False)
+        extName = gr.Textbox("", visible=False)
 
         with gr.Row():
             selectedExtension = gr.Dropdown(
@@ -89,7 +121,7 @@ def getTabUI():
             selectButton.click(
                 fn=selectExtension,
                 inputs=[selectedExtension],
-                outputs=[markdownFile, extPath, openRepo],
+                outputs=[markdownFile, extPath, extName, openRepo],
             ).then(
                 fn=None,
                 _js='readme_browser_afterRender',
@@ -105,7 +137,18 @@ def getTabUI():
         openSubFileButton.click(
             fn=openSubFile,
             _js="readme_browser_openSubFile_",
-            inputs=[dummy_component, extPath],
+            inputs=[dummy_component, extPath, extName],
+            outputs=[markdownFile]
+        ).then(
+            fn=None,
+            _js='readme_browser_afterRender',
+        )
+
+        openWikiButton = gr.Button("", visible=False, elem_id="readme_browser_openWikiButton")
+        openWikiButton.click(
+            fn=openWiki,
+            _js="readme_browser_openWiki_",
+            inputs=[dummy_component, dummy_component],
             outputs=[markdownFile]
         ).then(
             fn=None,
@@ -118,13 +161,15 @@ def getTabUI():
 def cacheAll(demo, app):
     def func():
         isFirst = True
-        for _, data in readme_files.readmeFilesByExtName.items():
+        for extName, data in readme_files.readmeFilesByExtName.items():
             if isFirst:
                 isFirst = False
                 continue
+            if extName == 'sd-webui-readme-browser':
+                continue
             try:
                 for mdFile in Path(data.extPath).rglob('*.md'):
-                    _ = renderMarkdownFile(mdFile, data.extPath)
+                    _ = renderMarkdownFile(mdFile, data.extPath, extName)
             except Exception as e:
                 print(f'Error on creating cache on startup, data.extPath = {data.extPath}')
                 print(e)

@@ -9,6 +9,7 @@ Supported things:
 1. Local nested .md files, e.g. docs or the readme in other languages
 1. Local anchors
 1. External links and media work as usual, and requires the Internet connection, of course
+1. GitHub Wiki of extension, if it's mentioned in its readme
 
 You can adjust few settings. The defaults are in the screenshot:
 

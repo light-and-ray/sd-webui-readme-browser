@@ -1,6 +1,7 @@
 import re
 from modules.gitpython_hack import Repo
 
+JS_PREFIX = 'readme_browser_javascript_'
 
 def getURLsFromFile(file: str) -> list[str]:
     urls = set()
@@ -21,8 +22,39 @@ def getURLsFromFile(file: str) -> list[str]:
     for link in hrefLinks:
         url = link.split('"')[-2]
         urls.add(url)
+    
+    httpsLinks = re.findall(r'[\n\r\s]+?https://.+?[\n\r\s]+?', file)
+    for link in httpsLinks:
+        link = link[1:-1].removesuffix('.')
+        urls.add(link)
 
     return urls
+
+
+def replaceURLInFile(file: str, oldUrl: str, newUrl: str) -> str:
+    foundIdx = file.find(oldUrl)
+    while foundIdx != -1:
+        try:
+            needReplace = False
+            if file[foundIdx-len('href="'):foundIdx] == 'href="':
+                needReplace = True
+            elif file[foundIdx-len('src="'):foundIdx] == 'src="':
+                needReplace = True
+            elif file[foundIdx-len(']('):foundIdx] == '](':
+                needReplace = True
+            elif oldUrl.lower().startswith('https://'):
+                needReplace = True
+                newUrl = f'[{newUrl}]({newUrl})'
+
+            if needReplace:
+                file = file[0:foundIdx] + newUrl + file[foundIdx+len(oldUrl):]
+
+        except IndexError:
+            pass
+
+        foundIdx = file.find(oldUrl, foundIdx+1)
+    
+    return file
 
 
 def isLocalURL(url: str):

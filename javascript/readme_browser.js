@@ -1,14 +1,29 @@
 
 var readme_browser_subFilePath = undefined;
 
-function readme_browser_openSubFile_(dummy, extPath) {
-    return [readme_browser_subFilePath, extPath];
+function readme_browser_openSubFile_(dummy, extPath, extName) {
+    return [readme_browser_subFilePath, extPath, extName];
 }
 
 
 function readme_browser_openSubFile(filePath) {
-    readme_browser_subFilePath = filePath;
+    readme_browser_subFilePath = decodeURI(filePath);
     button = gradioApp().getElementById('readme_browser_openSubFileButton');
+    button.click();
+}
+
+
+var readme_browser_repoName = undefined;
+var readme_browser_repoPath = undefined;
+
+function readme_browser_openWiki_(dummy1, dummy2) {
+    return [readme_browser_repoName, readme_browser_repoPath];
+}
+
+function readme_browser_openWiki(repoName, repoPath) {
+    readme_browser_repoName = decodeURI(repoName);
+    readme_browser_repoPath = decodeURI(repoPath);
+    button = gradioApp().getElementById('readme_browser_openWikiButton');
     button.click();
 }
 
@@ -54,7 +69,9 @@ function readme_browser_afterRender() {
         const prefix = 'readme_browser_javascript_';
         const prefixIndex = a.href.indexOf(prefix);
         if (prefixIndex !== -1) {
-            a.setAttribute('onclick', a.href.slice(prefixIndex + prefix.length));
+            let onClick = a.href.slice(prefixIndex + prefix.length);
+            onClick = decodeURI(onClick).replace(/%2C/g,",")
+            a.setAttribute('onclick', onClick);
             a.setAttribute('target', '');
             a.href = '#';
         }
