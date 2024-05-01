@@ -25,6 +25,12 @@
     font-family: monospace;
 }
 
+.readme-browser-file a[href]:where([href^="#"]:not([href="#"])):after {
+    content: '#';
+    font-size: 65% !important;
+    font-family: monospace;
+}
+
 .readme-browser-file ol li {
     display: inline !important;
 }

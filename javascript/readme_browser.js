@@ -28,7 +28,7 @@ function readme_browser_afterRender() {
         if (readme_browser_alreadyHasAnchor(h)) return;
         if (!h.innerHTML) return;
         let anchor = document.createElement('a');
-        let anchorID = h.innerHTML.toLowerCase().replaceAll(' ', '-').replaceAll("'", '');
+        let anchorID = h.innerText.toLowerCase().replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, '');
         if (anchorID in anchorNumbers) {
             let key = anchorID;
             anchorID += '-' + anchorNumbers[key];
