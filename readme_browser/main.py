@@ -5,6 +5,7 @@ from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
     makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheAllDatetime, hasAllowedExt,
+    makeAllMarkdownFilesList,
 )
 
 from readme_browser.options import needCache
@@ -33,6 +34,11 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
             sidebar = makeDummySidebar(os.path.dirname(filePath))
         
         file += '\n\n-----------\nSidebar\n-------------\n\n' + sidebar
+    else:
+        if extName != 'sd-webui-readme-browser':
+            allMarkdownFilesList = makeAllMarkdownFilesList(extDir)
+            if allMarkdownFilesList:
+                file += '\n\n-----------\nAll markdown files\n-------------\n\n' + allMarkdownFilesList
 
 
     for url in getURLsFromFile(file):

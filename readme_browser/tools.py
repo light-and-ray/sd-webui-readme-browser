@@ -1,4 +1,6 @@
 import re, datetime, os
+import urllib.parse
+from pathlib import Path
 from modules.gitpython_hack import Repo
 from modules import errors
 from readme_browser.options import EXT_ROOT_DIRECTORY
@@ -116,3 +118,16 @@ def hasAllowedExt(url: str):
     url = url.lower()
     ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.webp', '.gif', '.mp4', '.webm']
     return any(url.endswith(x) for x in ALLOWED_EXTENSIONS)
+
+
+def makeAllMarkdownFilesList(extPath: str) -> str:
+    allMarkdownFilesList = ''
+    for filePath in Path(extPath).rglob('*.md'):
+        fileName = os.path.basename(filePath)
+        if not fileName.endswith('.md'): continue
+        if fileName.startswith('_'): continue
+        if fileName.startswith('.'): continue
+        fullFileName = os.path.relpath(filePath, extPath)
+        if fullFileName.startswith('.'): continue
+        allMarkdownFilesList += f"[{fullFileName}](/{urllib.parse.quote(fullFileName)})\n"
+    return allMarkdownFilesList
