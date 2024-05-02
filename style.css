@@ -19,13 +19,13 @@
     text-decoration: underline dotted !important;
 }
 
-.readme-browser-file a[href]:where([href="#readme_browser_top_anchor"]):after {
+.readme-browser-file a[href]:where([href="#readme_browser_top_anchor"])::after {
     content: '↪';
     font-size: 60% !important;
     font-family: monospace;
 }
 
-.readme-browser-file a[href]:where([href^="#"]:not([href="#readme_browser_top_anchor"])):after {
+.readme-browser-file a[href]:where([href^="#"]:not([href="#readme_browser_top_anchor"]))::after {
     content: '#';
     font-size: 65% !important;
     font-family: monospace;
@@ -44,7 +44,8 @@
     margin-bottom: 16px !important;
 }
 
-.readme-browser-file li:has(br:first-child:last-child)
+.readme-browser-file a[href]:not([href*="://"]):not([href^="#"])::before
 {
-    margin-bottom: 0 !important;
+    content: '📎';
+    font-size: 88% !important;
 }
