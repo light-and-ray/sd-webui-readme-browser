@@ -19,7 +19,7 @@ class Anchor:
 def makeAnchorsList(file: str) -> str:
     anchors: list[Anchor] = []
     anchorsIDs: dict[str, int] = {}
-    hs: list[str] = re.findall(r'[^\n\r]#{1,6} +.+', file)
+    hs: list[str] = re.findall(r'^#{1,6} +.+', file, re.MULTILINE)
     validChars = set('abcdefghijklmnopqrstuvwxyz0123456789-_')
 
     for h in hs:
