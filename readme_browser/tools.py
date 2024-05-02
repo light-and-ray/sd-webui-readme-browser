@@ -1,11 +1,72 @@
 import re, datetime, os
 import urllib.parse
+from dataclasses import dataclass
 from pathlib import Path
 from modules.gitpython_hack import Repo
 from modules import errors, paths_internal
 from readme_browser.options import EXT_ROOT_DIRECTORY, getCacheLocation
 
 JS_PREFIX = 'readme_browser_javascript_'
+
+
+@dataclass
+class Anchor:
+    name: str
+    id: str
+    depth: int
+
+
+def makeAnchorsList(file: str) -> str:
+    anchors: list[Anchor] = []
+    anchorsIDs: dict[str, int] = {}
+    hs: list[str] = re.findall(r'[^\n\r]#{1,6} +.+', file)
+    validChars = set('abcdefghijklmnopqrstuvwxyz0123456789-_')
+
+    for h in hs:
+        depth = len(h.split(' ')[0])
+        anchorName = h.lstrip('#').strip().removesuffix(':')
+        anchor = anchorName.lower().replace(' ', '-')
+        tmp = anchor
+        for char in set(anchor):
+            if char not in validChars:
+                tmp = tmp.replace(char, '')
+        anchor = tmp
+        if anchor in anchorsIDs:
+            num = anchorsIDs[anchor]
+            anchorsIDs[anchor] += 1
+            anchor += f'-{num}'
+        else:
+            anchorsIDs[anchor] = 1
+
+        anchors.append(Anchor(anchorName, anchor, depth))
+
+    if len(anchors) <= 4:
+        return ""
+
+    minDepth = min(x.depth for x in anchors)
+    for i in range(len(anchors)):
+        anchors[i].depth = anchors[i].depth - minDepth
+
+    result = '\n\n-----------------------\n\n<details>\n<summary>File index</summary>\n\n'
+    for anchor in anchors:
+        filler = ''
+        if anchor.depth > 0:
+            filler = '&nbsp;&nbsp;&nbsp;&nbsp;' * anchor.depth
+        result += f'{filler}[{anchor.name}](#{anchor.id})\n\n'
+    result += '\n</details>\n\n'
+
+    return result
+
+
+def addJumpAnchors(file: str) -> str:
+    if file.count('\n') <= 20:
+        return ""
+    
+    top = '<a id="readme_browser_top_anchor" href="#readme_browser_bottom_anchor">Go to the bottom ↓</a>'
+    bottom = '<a id="readme_browser_bottom_anchor" href="#readme_browser_top_anchor">Go to the top ↑</a>'
+
+    return f'{top}\n\n{file}\n\n{bottom}\n'
+
 
 def getURLsFromFile(file: str) -> list[str]:
     urls = set()

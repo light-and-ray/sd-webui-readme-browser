@@ -73,7 +73,7 @@ function readme_browser_afterRender() {
             onClick = decodeURI(onClick).replace(/%2C/g,",")
             a.setAttribute('onclick', onClick);
             a.setAttribute('target', '');
-            a.href = '#';
+            a.href = '#readme_browser_top_anchor';
         }
     });
 }
