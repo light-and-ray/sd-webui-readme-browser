@@ -60,7 +60,7 @@ def makeAnchorsList(file: str) -> str:
 
 def addJumpAnchors(file: str) -> str:
     if file.count('\n') <= 20:
-        return ""
+        return file
     
     top = '<a id="readme_browser_top_anchor" href="#readme_browser_bottom_anchor">Go to the bottom ↓</a>'
     bottom = '<a id="readme_browser_bottom_anchor" href="#readme_browser_top_anchor">Go to the top ↑</a>'
