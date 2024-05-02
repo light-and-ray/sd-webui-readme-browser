@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass
 from modules import extensions, util, paths_internal
-from readme_browser.options import needHideDisabledExtensions, DEFAULT_WIKI_LOCATION
+from readme_browser.options import needHideDisabledExtensions, getWikiLocation
 
 
 @dataclass
@@ -32,8 +32,8 @@ def initReadmeFiles():
                 readmeFilesByExtName[ext.name] = ReadmeFileData(file, ext.path)
                 break
 
-    for dir in os.listdir(DEFAULT_WIKI_LOCATION):
-        wikiPath = os.path.join(DEFAULT_WIKI_LOCATION, dir)
+    for dir in os.listdir(getWikiLocation()):
+        wikiPath = os.path.join(getWikiLocation(), dir)
         wikiName = os.path.basename(wikiPath)
         homeFile = os.path.join(wikiPath, 'Home.md')
         readmeFilesByExtName[f'wiki - {wikiName}'] = ReadmeFileData(homeFile, wikiPath)

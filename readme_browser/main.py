@@ -5,7 +5,7 @@ from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
     makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheDatetime, hasAllowedExt,
-    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES, enoughtTimeLeftForCache, makeAnchorsList,
+    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES, enoughtTimeLeftForCache, makeFileIndex,
     addJumpAnchors,
 )
 
@@ -21,15 +21,16 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
     with open(filePath, mode='r', encoding="utf-8-sig") as f:
         file = f.read()
 
-    file = addJumpAnchors(file)
-    file += makeAnchorsList(file)
-
     if isWiki:
         footerPath = os.path.join(os.path.dirname(filePath), '_Footer.md')
         if os.path.exists(footerPath):
             with open(footerPath, mode='r', encoding="utf-8-sig") as f:
-                file += '\n\n--------------\n\n' + f.read()
+                file += '\n\n' + f.read()
 
+    file = addJumpAnchors(file)
+    file += makeFileIndex(file)
+
+    if isWiki:
         sidebarPath = os.path.join(os.path.dirname(filePath), '_Sidebar.md')
         if os.path.exists(sidebarPath):
             with open(sidebarPath, mode='r', encoding="utf-8-sig") as f:

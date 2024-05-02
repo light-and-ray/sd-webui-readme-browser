@@ -16,7 +16,7 @@ class Anchor:
     depth: int
 
 
-def makeAnchorsList(file: str) -> str:
+def makeFileIndex(file: str) -> str:
     anchors: list[Anchor] = []
     anchorsIDs: dict[str, int] = {}
     hs: list[str] = re.findall(r'^#{1,6} +.+', file, re.MULTILINE)
@@ -101,18 +101,22 @@ def replaceURLInFile(file: str, oldUrl: str, newUrl: str) -> str:
     foundIdx = file.find(oldUrl)
     while foundIdx != -1:
         try:
-            needReplace = False
+            needReplaceLeft = False
             if file[foundIdx-len('href="'):foundIdx] == 'href="':
-                needReplace = True
+                needReplaceLeft = True
             elif file[foundIdx-len('src="'):foundIdx] == 'src="':
-                needReplace = True
+                needReplaceLeft = True
             elif file[foundIdx-len(']('):foundIdx] == '](':
-                needReplace = True
+                needReplaceLeft = True
             elif oldUrl.lower().startswith('https://'):
-                needReplace = True
+                needReplaceLeft = True
                 newUrl = f'[{newUrl}]({newUrl})'
+            
+            needReplaceRight = False
+            if file[foundIdx+len(oldUrl)] in ')]}>"\' \\\n.,':
+                needReplaceRight = True
 
-            if needReplace:
+            if needReplaceLeft and needReplaceRight:
                 file = file[0:foundIdx] + newUrl + file[foundIdx+len(oldUrl):]
 
         except IndexError:

@@ -2,7 +2,7 @@ import os
 import urllib.parse
 from git import Repo
 from modules import util
-from readme_browser.options import DEFAULT_WIKI_LOCATION
+from readme_browser.options import getWikiLocation
 from readme_browser.tools import JS_PREFIX, enoughtTimeLeftForCache
 
 
@@ -43,7 +43,7 @@ def getLocalWikiURL(url: str) -> str:
     wikiName = tmp[0].split('/')[-2] + " - " + tmp[0].split('/')[-1]
     filePath = tmp[1]
 
-    dirPath = os.path.join(DEFAULT_WIKI_LOCATION, wikiName)
+    dirPath = os.path.join(getWikiLocation(), wikiName)
     try:
         if not os.path.exists(dirPath):
             Repo.clone_from(repoURL, dirPath)
@@ -60,7 +60,7 @@ def getLocalWikiURL(url: str) -> str:
 
 
 def getwikiFilePath(wikiName, fileName):
-    dirPath = os.path.join(DEFAULT_WIKI_LOCATION, wikiName)
+    dirPath = os.path.join(getWikiLocation(), wikiName)
     if not fileName:
         fileName = 'Home.md'
     else:

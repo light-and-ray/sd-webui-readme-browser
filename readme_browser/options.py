@@ -34,6 +34,12 @@ def getCacheLocation():
 
 DEFAULT_WIKI_LOCATION = os.path.join(EXT_ROOT_DIRECTORY, 'wiki')
 
+def getWikiLocation():
+    res : str = shared.opts.data.get("readme_browser_wiki_location", "")
+    if res == "":
+        res = DEFAULT_WIKI_LOCATION
+    return res
+
 
 section = ("readme_browser", "Readme browser")
 options = {
@@ -74,6 +80,16 @@ options = {
         gr.Textbox,
         {
             "placeholder": "Leave empty to use default 'sd-webui-readme-browser/cache' location",
+        },
+        section=section,
+    ).needs_reload_ui(),
+
+    "readme_browser_wiki_location": shared.OptionInfo(
+        "",
+        "Cloned wiki location",
+        gr.Textbox,
+        {
+            "placeholder": "Leave empty to use default 'sd-webui-readme-browser/wiki' location",
         },
         section=section,
     ).needs_reload_ui(),
