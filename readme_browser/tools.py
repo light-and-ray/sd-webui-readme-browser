@@ -52,8 +52,9 @@ def makeAnchorsList(file: str) -> str:
         filler = ''
         if anchor.depth > 0:
             filler = '&nbsp;&nbsp;&nbsp;&nbsp;' * anchor.depth
-        result += f'{filler}[{anchor.name}](#{anchor.id})\n\n'
-    result += '\n</details>\n\n'
+        result += f'{filler}[{anchor.name}](#{anchor.id})\\\n'
+    result = result[:-2]
+    result += '\n\n</details>\n\n'
 
     return result
 
@@ -63,7 +64,7 @@ def addJumpAnchors(file: str) -> str:
         return file
     
     top = '<a id="readme_browser_top_anchor" href="#readme_browser_bottom_anchor">Go to the bottom ↓</a>'
-    bottom = '<a id="readme_browser_bottom_anchor" href="#readme_browser_top_anchor">Go to the top ↑</a>'
+    bottom = '<a id="readme_browser_bottom_anchor" href="#">Go to the top ↑</a>'
 
     return f'{top}\n\n{file}\n\n{bottom}\n'
 
