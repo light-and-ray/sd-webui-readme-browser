@@ -72,26 +72,21 @@ def addJumpAnchors(file: str) -> str:
 def getURLsFromFile(file: str) -> list[str]:
     urls = set()
 
-    MDLinks = re.findall(r'\[.*?\]\(.+?\)', file)
+    MDLinks = re.findall(r'\[.*?\]\((.+?)\)', file)
     for link in MDLinks:
-        tmp: str = link.replace(r'\(', '')
-        tmp = tmp.split('(')[-1]
-        url = tmp.removesuffix(')')
-        urls.add(url)
+        urls.add(link)
 
-    srcLinks = re.findall(r'src=".+?"', file)
+    srcLinks = re.findall(r'src="(.+?)"', file)
     for link in srcLinks:
-        url = link.split('"')[-2]
-        urls.add(url)
+        urls.add(link)
 
-    hrefLinks = re.findall(r'href=".+?"', file)
+    hrefLinks = re.findall(r'href="(.+?)"', file)
     for link in hrefLinks:
-        url = link.split('"')[-2]
-        urls.add(url)
+        urls.add(link)
     
-    httpsLinks = re.findall(r'[\n\r\s]+?https://.+?[\n\r\s]+?', file)
+    httpsLinks = re.findall(r'(^|\s)(https://.+?)($|\s)', file, re.MULTILINE)
     for link in httpsLinks:
-        link = link[1:-1].removesuffix('.')
+        link = link[1].removesuffix('.')
         urls.add(link)
 
     return urls
