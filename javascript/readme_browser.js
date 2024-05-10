@@ -8,7 +8,7 @@ function readme_browser_openSubFile_(dummy, extPath, extName) {
 
 function readme_browser_openSubFile(filePath) {
     readme_browser_subFilePath = decodeURI(filePath);
-    button = gradioApp().getElementById('readme_browser_openSubFileButton');
+    let button = gradioApp().getElementById('readme_browser_openSubFileButton');
     button.click();
 }
 
@@ -23,7 +23,7 @@ function readme_browser_openWiki_(dummy1, dummy2) {
 function readme_browser_openWiki(wikiName, filePath) {
     readme_browser_wikiName = decodeURI(wikiName);
     readme_browser_filePath = decodeURI(filePath);
-    button = gradioApp().getElementById('readme_browser_openWikiButton');
+    let button = gradioApp().getElementById('readme_browser_openWikiButton');
     button.click();
 }
 
@@ -36,8 +36,8 @@ function readme_browser_alreadyHasAnchor(h) {
 
 
 function readme_browser_afterRender() {
-    file = gradioApp().getElementById('readme_browser_file');
-    hElements = [...file.querySelectorAll("h1, h2, h3, h4, h5, h6")];
+    let file = gradioApp().getElementById('readme_browser_file');
+    let hElements = [...file.querySelectorAll("h1, h2, h3, h4, h5, h6")];
     let anchorNumbers = {};
     hElements.forEach((h) => {
         if (readme_browser_alreadyHasAnchor(h)) return;
@@ -56,9 +56,8 @@ function readme_browser_afterRender() {
         h.parentNode.insertBefore(anchor, h);
     });
 
-    aElements = [...file.getElementsByTagName('a')];
-    if (!aElements) return;
 
+    let aElements = [...file.getElementsByTagName('a')];
     aElements.forEach((a) => {
         if (!a.href) return;
         const url = new URL(a.href);
@@ -70,7 +69,7 @@ function readme_browser_afterRender() {
         const prefixIndex = a.href.indexOf(prefix);
         if (prefixIndex !== -1) {
             let onClick = a.href.slice(prefixIndex + prefix.length);
-            onClick = decodeURI(onClick).replace(/%2C/g,",")
+            onClick = decodeURI(onClick).replaceAll("%2C", ",");
             a.setAttribute('onclick', onClick);
             a.setAttribute('target', '');
             a.href = '#readme_browser_top_anchor';
