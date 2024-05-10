@@ -60,8 +60,9 @@ def makeFileIndex(file: str) -> str:
 
 
 def addJumpAnchors(file: str) -> str:
-    if file.count('\n') <= 20:
-        return file
+    if file.count('\n') <= 30:
+        topInvisible = '<a id="readme_browser_top_anchor"></a>'
+        return f'{topInvisible}\n\n{file}\n'
     
     top = '<a id="readme_browser_top_anchor" href="#readme_browser_bottom_anchor">Go to the bottom ↓</a>'
     bottom = '<a id="readme_browser_bottom_anchor" href="#">Go to the top ↑</a>'
