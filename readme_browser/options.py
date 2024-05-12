@@ -29,6 +29,7 @@ def getCacheLocation():
     res : str = shared.opts.data.get("readme_browser_cache_location", "")
     if res == "":
         res = DEFAULT_CACHE_LOCATION
+    os.makedirs(res, exist_ok=True)
     return res
 
 
@@ -38,6 +39,7 @@ def getWikiLocation():
     res : str = shared.opts.data.get("readme_browser_wiki_location", "")
     if res == "":
         res = DEFAULT_WIKI_LOCATION
+    os.makedirs(res, exist_ok=True)
     return res
 
 
