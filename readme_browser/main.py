@@ -60,6 +60,8 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
 
         if isLocalURL(url):
             if isAnchor(url): continue
+            if '#' in url:
+                url = url.removesuffix('#' + url.split('#')[-1])
             if isWiki and not hasAllowedExt(url):
                 url += '.md'
 
