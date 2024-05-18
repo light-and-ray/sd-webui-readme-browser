@@ -16,7 +16,17 @@ class Anchor:
     depth: int
 
 
+def removeCodeBlocks(file: str) -> str:
+    def replace(string, old, new):
+        compiled = re.compile(old, re.MULTILINE)
+        res = compiled.sub(new, string)
+        return str(res)
+    file = replace(file, r'(```[\s\S]*?```)', '')
+    return file
+
+
 def makeFileIndex(file: str) -> str:
+    file = removeCodeBlocks(file)
     anchors: list[Anchor] = []
     anchorsIDs: dict[str, int] = {}
     hs: list[str] = re.findall(r'^#{1,6} +.+', file, re.MULTILINE)
