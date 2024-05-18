@@ -31,12 +31,8 @@
     font-family: monospace;
 }
 
-.readme-browser-file ol li {
-    display: inline !important;
-}
-
-.readme-browser-file li {
-    margin-bottom: 0 !important;
+.readme-browser-file ol li p {
+    margin-bottom: 1em !important;
 }
 
 .readme-browser-file p {
