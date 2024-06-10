@@ -3,7 +3,7 @@ import urllib.parse
 from git import Repo
 from modules import util
 from readme_browser.options import getWikiLocation
-from readme_browser.tools import JS_PREFIX, enoughtTimeLeftForCache
+from readme_browser.tools import JS_PREFIX, enoughTimeLeftForCache
 
 
 def makeDummySidebar(dirPath: str) -> str:
@@ -47,7 +47,7 @@ def getLocalWikiURL(url: str) -> str:
     try:
         if not os.path.exists(dirPath):
             Repo.clone_from(repoURL, dirPath)
-        elif enoughtTimeLeftForCache():
+        elif enoughTimeLeftForCache():
             repo = Repo(dirPath)
             repo.git.fetch(all=True)
             repo.git.reset('origin', hard=True)
@@ -59,7 +59,7 @@ def getLocalWikiURL(url: str) -> str:
     return link
 
 
-def getwikiFilePath(wikiName, fileName):
+def getWikiFilePath(wikiName, fileName):
     dirPath = os.path.join(getWikiLocation(), wikiName)
     if not fileName:
         fileName = 'Home.md'

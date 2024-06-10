@@ -5,14 +5,14 @@ from threading import Thread
 import gradio as gr
 from readme_browser.tools import (getURLsFromFile, isLocalURL, isAnchor, isMarkdown,
     makeOpenRepoLink, JS_PREFIX, replaceURLInFile, saveLastCacheDatetime, hasAllowedExt,
-    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES, enoughtTimeLeftForCache, makeFileIndex,
+    makeAllMarkdownFilesList, SPECIAL_EXTENSION_NAMES, enoughTimeLeftForCache, makeFileIndex,
     addJumpAnchors,
 )
 
 from readme_browser.options import needCache
 from readme_browser.cache import cache
 from readme_browser import readme_files
-from readme_browser.wiki import isWikiURL, getLocalWikiURL, makeDummySidebar, getwikiFilePath
+from readme_browser.wiki import isWikiURL, getLocalWikiURL, makeDummySidebar, getWikiFilePath
 
 
 def renderMarkdownFile(filePath: str, extDir: str, extName: str):
@@ -37,7 +37,7 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
                 sidebar = f.read()
         else:
             sidebar = makeDummySidebar(os.path.dirname(filePath))
-        
+
         file += '\n\n-----------\nSidebar\n-------------\n\n' + sidebar
     else:
         allMarkdownFilesList = makeAllMarkdownFilesList(extDir)
@@ -88,7 +88,7 @@ def renderMarkdownFile(filePath: str, extDir: str, extName: str):
             replacementUrl = urllib.parse.quote(replacementUrl)
             file = replaceURLInFile(file, originalURL, replacementUrl)
 
-    if enoughtTimeLeftForCache(extName):
+    if enoughTimeLeftForCache(extName):
         saveLastCacheDatetime(extName)
     return file
 
@@ -108,7 +108,7 @@ def openSubFile(filePath: str, extPath: str, extName: str):
 
 
 def openWiki(wikiName, filePath):
-    filePath = getwikiFilePath(wikiName, filePath)
+    filePath = getWikiFilePath(wikiName, filePath)
     dirPath = os.path.dirname(filePath)
     file = renderMarkdownFile(filePath, dirPath, f'wiki - {wikiName}')
     openRepo = makeOpenRepoLink(dirPath)
@@ -177,7 +177,7 @@ def getTabUI():
 def cacheAll(demo, app):
     def func():
         for extName, data in readme_files.readmeFilesByExtName.items():
-            if not enoughtTimeLeftForCache(extName):
+            if not enoughTimeLeftForCache(extName):
                 continue
             if extName in SPECIAL_EXTENSION_NAMES:
                 continue

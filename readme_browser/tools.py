@@ -73,7 +73,7 @@ def addJumpAnchors(file: str) -> str:
     if file.count('\n') <= 30:
         topInvisible = '<a id="readme_browser_top_anchor"></a>'
         return f'{topInvisible}\n\n{file}\n'
-    
+
     top = '<a id="readme_browser_top_anchor" href="#readme_browser_bottom_anchor">Go to the bottom ↓</a>'
     bottom = '<a id="readme_browser_bottom_anchor" href="#">Go to the top ↑</a>'
 
@@ -94,7 +94,7 @@ def getURLsFromFile(file: str) -> list[str]:
     hrefLinks = re.findall(r'href="(.+?)"', file)
     for link in hrefLinks:
         urls.add(link)
-    
+
     httpsLinks = re.findall(r'(^|\s)(https://.+?)($|\s)', file, re.MULTILINE)
     for link in httpsLinks:
         link = link[1].removesuffix('.')
@@ -117,7 +117,7 @@ def replaceURLInFile(file: str, oldUrl: str, newUrl: str) -> str:
             elif oldUrl.lower().startswith('https://'):
                 needReplaceLeft = True
                 newUrl = f'[{newUrl}]({newUrl})'
-            
+
             needReplaceRight = False
             if file[foundIdx+len(oldUrl)] in ')]}>"\' \\\n.,':
                 needReplaceRight = True
@@ -129,7 +129,7 @@ def replaceURLInFile(file: str, oldUrl: str, newUrl: str) -> str:
             pass
 
         foundIdx = file.find(oldUrl, foundIdx+1)
-    
+
     return file
 
 
@@ -181,7 +181,7 @@ def readLastCacheDatetime(extName: str) -> datetime.datetime:
     return dt
 
 
-def enoughtTimeLeftForCache(extName: str) -> bool:
+def enoughTimeLeftForCache(extName: str) -> bool:
     last = None
     try:
         last = readLastCacheDatetime(extName)
