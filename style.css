@@ -1,43 +1,51 @@
-.readme-browser-file {
+.readme-browser-file
+{
     max-width: 1012px;
     margin-right: auto !important;
     margin-left: auto !important;
-    font-size: 106% !important;
+    font-size: 16px !important;
+    line-height: 1.1 !important;
     overflow-wrap: break-word;
 }
 
-.readme-browser-file table {
+.readme-browser-file table
+{
     display: block;
     overflow-x: auto;
 }
 
-.readme-browser-file strong {
+.readme-browser-file strong
+{
     font-size: 105% !important;
 }
 
-.readme-browser-file a[href] {
+.readme-browser-file a[href]
+{
     text-decoration: underline dotted !important;
 }
 
-.readme-browser-file a[href]:where([href="#readme_browser_top_anchor"])::after {
+.readme-browser-file a[href]:where([href="#readme_browser_top_anchor"])::after
+{
     content: '↪';
     font-size: 60% !important;
     font-family: monospace;
 }
 
-.readme-browser-file a[href]:where([href^="#"]:not([href="#readme_browser_top_anchor"]))::after {
+.readme-browser-file a[href]:where([href^="#"]:not([href="#readme_browser_top_anchor"]))::after
+{
     content: '#';
     font-size: 65% !important;
     font-family: monospace;
 }
 
-.readme-browser-file ol li p {
-    margin-bottom: 1em !important;
+.readme-browser-file p, .readme-browser-file ol, .readme-browser-file ul
+{
+    margin-bottom: 22px !important;
 }
 
-.readme-browser-file p {
-    line-height: 1.5 !important;
-    margin-bottom: 16px !important;
+.readme-browser-file details
+{
+    margin-bottom: 8px !important;
 }
 
 .readme-browser-file a[href]:not([href*="://"]):not([href^="#"])::before
